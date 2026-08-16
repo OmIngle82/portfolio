@@ -14,8 +14,30 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "My Portfolio",
-  description: "Modern 3D Portfolio Website",
+  title: "Om Ingle | Software Engineer",
+  description: "Architecting intelligence and engineering impact through robust backend architecture and AI-driven solutions.",
+  openGraph: {
+    title: "Om Ingle | Software Engineer",
+    description: "Architecting intelligence and engineering impact through robust backend architecture and AI-driven solutions.",
+    url: "https://omingledocs.vercel.app/",
+    siteName: "Om Ingle Portfolio",
+    images: [
+      {
+        url: "/og-image.png", // Must match public/og-image.png
+        width: 1200,
+        height: 630,
+        alt: "Om Ingle - Software Engineer Portfolio Preview",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Om Ingle | Software Engineer",
+    description: "Architecting intelligence and engineering impact through robust backend architecture and AI-driven solutions.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
