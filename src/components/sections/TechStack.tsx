@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import {
   SiIntellijidea, SiEclipseide, SiSelenium, SiApachejmeter,
   SiOllama, SiLangchain, SiTensorflow, SiPython, SiPostgresql,
@@ -118,7 +118,7 @@ const grid = (() => {
 
 // ── Component ─────────────────────────────────────────
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -126,7 +126,7 @@ const containerVariants = {
   },
 };
 
-const hexVariants = {
+const hexVariants: Variants = {
   hidden: { opacity: 0, scale: 0.8, filter: "blur(10px)" },
   show: { 
     opacity: 1, 

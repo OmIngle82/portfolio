@@ -29,8 +29,8 @@ const FallingStars = () => {
       opacity: number;
 
       constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
+        this.x = Math.random() * canvas!.width;
+        this.y = Math.random() * canvas!.height;
         // Small varying sizes to create depth
         this.size = Math.random() * 1.5 + 0.5;
         // Slower speed for parallax feel
@@ -42,9 +42,9 @@ const FallingStars = () => {
       update() {
         this.y += this.speedY;
         // Reset to top when it falls off screen
-        if (this.y > canvas.height) {
+        if (this.y > canvas!.height) {
           this.y = 0 - this.size;
-          this.x = Math.random() * canvas.width;
+          this.x = Math.random() * canvas!.width;
         }
       }
 
@@ -60,7 +60,7 @@ const FallingStars = () => {
     const init = () => {
       particlesArray = [];
       // Adjust density based on screen width
-      const numberOfParticles = Math.floor((canvas.width * canvas.height) / 8000);
+      const numberOfParticles = Math.floor((canvas!.width * canvas!.height) / 8000);
       for (let i = 0; i < numberOfParticles; i++) {
         particlesArray.push(new Particle());
       }
