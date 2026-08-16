@@ -18,6 +18,8 @@ export default function VerticalNav() {
   const [showLabel, setShowLabel] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isManualScrollRef = useRef(false);
   const activeSectionRef = useRef(activeSection);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -49,7 +51,7 @@ export default function VerticalNav() {
 
     const observerCallback: IntersectionObserverCallback = (entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !isManualScrollRef.current) {
           if (activeSectionRef.current !== entry.target.id) {
             setActiveSection(entry.target.id);
             triggerLabel();
@@ -75,9 +77,17 @@ export default function VerticalNav() {
   const safeActiveIndex = activeIndex !== -1 ? activeIndex : 0;
 
   const handleClick = (id: string) => {
+    isManualScrollRef.current = true;
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setActiveSection(id);
     triggerLabel();
+    
+    // Unlock observer after scroll finishes (approx 1000ms)
+    scrollTimeoutRef.current = setTimeout(() => {
+      isManualScrollRef.current = false;
+    }, 1000);
   };
 
   return (
@@ -96,8 +106,8 @@ export default function VerticalNav() {
           }}
           transition={{
             type: "spring",
-            stiffness: 200,
-            damping: 25,
+            stiffness: 300,
+            damping: 30,
             mass: 0.8
           }}
         />
