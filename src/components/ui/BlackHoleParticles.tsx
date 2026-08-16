@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 type Star = {
   id: number;
@@ -15,6 +16,7 @@ type Star = {
 export const BlackHoleParticles = () => {
   const [stars, setStars] = useState<Star[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     // Increased the container size from 700 to 1400 to cover 50% surround of the massive black hole
@@ -24,8 +26,10 @@ export const BlackHoleParticles = () => {
 
     const generatedStars: Star[] = [];
 
-    // Increased particle count
-    for (let i = 0; i < 300; i++) {
+    // Vastly reduced particle count on mobile to save performance
+    const particleCount = isMobile ? 60 : 300;
+
+    for (let i = 0; i < particleCount; i++) {
       const angle = Math.random() * Math.PI * 2;
       // Spawn within the 1400px container (radius up to 700px)
       const distance = Math.random() * 700;
@@ -50,7 +54,7 @@ export const BlackHoleParticles = () => {
       });
     }
     setStars(generatedStars);
-  }, []);
+  }, [isMobile]);
 
   return (
     <div 

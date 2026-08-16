@@ -2,6 +2,7 @@
 
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface SonicBlastParticlesProps {
   x: number;
@@ -10,9 +11,12 @@ interface SonicBlastParticlesProps {
 }
 
 export const SonicBlastParticles = ({ x, y, color }: SonicBlastParticlesProps) => {
+  const isMobile = useIsMobile();
+
   const particles = useMemo(() => {
-    // Generate 60 star particles
-    return Array.from({ length: 60 }).map((_, i) => {
+    // Generate star particles based on device
+    const particleCount = isMobile ? 20 : 60;
+    return Array.from({ length: particleCount }).map((_, i) => {
       // Random angle (0 to 360 degrees)
       const angle = Math.random() * Math.PI * 2;
       
@@ -36,7 +40,7 @@ export const SonicBlastParticles = ({ x, y, color }: SonicBlastParticlesProps) =
         duration: Math.random() * 4 + 4, // 4 to 8 seconds total lifecycle
       };
     });
-  }, []);
+  }, [isMobile]);
 
   return (
     <motion.div

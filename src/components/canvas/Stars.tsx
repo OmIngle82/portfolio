@@ -5,14 +5,17 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Points, PointMaterial, Preload } from "@react-three/drei";
 import * as THREE from "three";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
-const StarBackground = (props: any) => {
+const StarBackground = ({ isMobile, ...props }: any) => {
   const ref = useRef<THREE.Points>(null);
   
-  // Generate random points in a sphere
+  // Generate random points in a sphere based on device
+  const numStars = isMobile ? 1500 : 5000;
+  
   const [sphere] = useState(() => {
-    const positions = new Float32Array(5000 * 3);
-    for (let i = 0; i < 5000; i++) {
+    const positions = new Float32Array(numStars * 3);
+    for (let i = 0; i < numStars; i++) {
       const r = 1.2 * Math.cbrt(Math.random());
       const theta = Math.random() * 2 * Math.PI;
       const phi = Math.acos(2 * Math.random() - 1);
@@ -48,6 +51,7 @@ const StarBackground = (props: any) => {
 
 const StarsCanvas = () => {
   const { scrollY } = useScroll();
+  const isMobile = useIsMobile();
   // Fades out completely to 0 opacity as the user scrolls down
   const opacity = useTransform(scrollY, [0, 1000], [1, 0]);
 
@@ -56,9 +60,13 @@ const StarsCanvas = () => {
       style={{ opacity }}
       className="w-full h-full fixed inset-0 z-[-1]"
     >
-      <Canvas camera={{ position: [0, 0, 1] }}>
+      <Canvas 
+        camera={{ position: [0, 0, 1] }}
+        dpr={isMobile ? [1, 1.5] : [1, 2]}
+        gl={{ antialias: !isMobile }}
+      >
         <Suspense fallback={null}>
-          <StarBackground />
+          <StarBackground isMobile={isMobile} />
         </Suspense>
         <Preload all />
       </Canvas>
