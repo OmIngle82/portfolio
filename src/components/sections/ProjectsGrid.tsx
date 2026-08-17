@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { RisingParticles } from "@/components/ui/RisingParticles";
 import { ProjectTray } from "@/components/ui/ProjectTray";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const projectsData: Record<number, { title: string; desc: string; features: string[]; github: string; live: string; }> = {
   0: { 
@@ -66,6 +67,7 @@ const projectsData: Record<number, { title: string; desc: string; features: stri
 
 const ProjectsGrid = () => {
   const [openProjects, setOpenProjects] = useState<number[]>([]);
+  const isMobile = useIsMobile();
 
   const toggleProject = (index: number) => {
     setOpenProjects(prev => {
@@ -92,12 +94,14 @@ const ProjectsGrid = () => {
     <section id="projects" className="w-full min-h-screen py-20 relative flex flex-col items-center justify-center overflow-hidden bg-[#030014]">
       
       {/* Background Image and Blending Gradients */}
-      <div className="absolute inset-0 z-0 pointer-events-none translate-y-40 scale-[1.40]">
-        <div 
-          className="absolute inset-0 bg-no-repeat opacity-90"
-          style={{ backgroundImage: 'url("/Cone.png")', backgroundSize: 'contain', backgroundPosition: 'center bottom' }}
-        />
-      </div>
+      {!isMobile && (
+        <div className="absolute inset-0 z-0 pointer-events-none translate-y-40 scale-[1.40]">
+          <div 
+            className="absolute inset-0 bg-no-repeat opacity-90"
+            style={{ backgroundImage: 'url("/Cone.png")', backgroundSize: 'contain', backgroundPosition: 'center bottom' }}
+          />
+        </div>
+      )}
       
       <RisingParticles />
 
@@ -129,11 +133,12 @@ const ProjectsGrid = () => {
               return (
                 <motion.div
                   key={index}
-                  layout
+                  layout={!isMobile} // Disable expensive grid reflow calculations on mobile
                   initial={{ opacity: 0, scale: 0.8, y: 20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.8, y: 20 }}
                   className="pointer-events-auto shrink-0"
+                  style={{ willChange: "transform, opacity" }} // Hardware acceleration
                 >
                   {/* Card Wrapper for Hover Reveal */}
                   <div className="card-wrapper">

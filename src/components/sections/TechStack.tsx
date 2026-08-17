@@ -13,6 +13,7 @@ import { FaGoogle, FaDatabase, FaAws, FaJava, FaVial } from "react-icons/fa";
 import { VscVscode } from "react-icons/vsc";
 import type { IconType } from "react-icons";
 import { SonicBlastParticles } from "../ui/SonicBlastParticles";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 // ── Data ──────────────────────────────────────────────
 type Tech = {
@@ -118,23 +119,7 @@ const grid = (() => {
 
 // ── Component ─────────────────────────────────────────
 
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.015, ease: "easeInOut" },
-  },
-};
-
-const hexVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.8, filter: "blur(10px)" },
-  show: { 
-    opacity: 1, 
-    scale: 1, 
-    filter: "blur(0px)",
-    transition: { type: "spring", stiffness: 80, damping: 20 }
-  },
-};
+// Component logic starts below
 
 type ActiveData = {
   tech: Tech;
@@ -147,9 +132,28 @@ type ActiveData = {
 };
 
 const TechStack = () => {
+  const isMobile = useIsMobile();
   const [activeData, setActiveData] = useState<ActiveData | null>(null);
   const [badgeWidth, setBadgeWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.015, ease: "easeInOut" },
+    },
+  };
+
+  const hexVariants: Variants = {
+    hidden: { opacity: 0, scale: 0.8, filter: isMobile ? "blur(0px)" : "blur(10px)" },
+    show: { 
+      opacity: 1, 
+      scale: 1, 
+      filter: "blur(0px)",
+      transition: { type: "spring", stiffness: 80, damping: 20 }
+    },
+  };
 
   // Clear active data on resize to prevent broken lines
   useEffect(() => {
@@ -162,8 +166,8 @@ const TechStack = () => {
     const container = containerRef.current;
     if (!container) return;
 
-    // trigger the ripple math for all hexes
-    if (!container.classList.contains("show-ripple")) {
+    // trigger the ripple math for all hexes (skip on mobile for performance)
+    if (!container.classList.contains("show-ripple") && !isMobile) {
       const allHexes = Array.from(
         container.querySelectorAll(".honeycomb-hex")
       ) as HTMLDivElement[];
@@ -322,22 +326,42 @@ const TechStack = () => {
                     transition={{ duration: 0.4, ease: "easeOut" }}
                   />
 
-                  {/* Pulsing Energy Comet (using SVG pathOffset to bend perfectly) */}
-                  <motion.path
-                    d={dynamicSvgPath}
-                    stroke={activeData.tech.color}
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    fill="none"
-                    style={{ filter: `drop-shadow(0 0 8px ${activeData.tech.color})` }}
-                    initial={{ pathLength: 0.15, pathOffset: -0.15, opacity: 0 }}
-                    animate={{ pathOffset: 1, opacity: 1 }}
-                    exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                    transition={{ 
-                      pathOffset: { duration: 1.5, repeat: Infinity, ease: "linear", delay: 0.4 },
-                      opacity: { delay: 0.4, duration: 0.2 }
-                    }}
-                  />
+                  {/* Pulsing Energy Comet */}
+                  {isMobile ? (
+                    // Fake Glow for Mobile (Zero Filter Overhead)
+                    <motion.path
+                      d={dynamicSvgPath}
+                      stroke={activeData.tech.color}
+                      strokeWidth="10"
+                      strokeLinecap="round"
+                      fill="none"
+                      style={{ opacity: 0.2 }}
+                      initial={{ pathLength: 0.15, pathOffset: -0.15, opacity: 0 }}
+                      animate={{ pathOffset: 1, opacity: 0.2 }}
+                      exit={{ opacity: 0, transition: { duration: 0.2 } }}
+                      transition={{ 
+                        pathOffset: { duration: 1.5, repeat: Infinity, ease: "linear", delay: 0.4 },
+                        opacity: { delay: 0.4, duration: 0.2 }
+                      }}
+                    />
+                  ) : (
+                    // True Drop-Shadow for Desktop
+                    <motion.path
+                      d={dynamicSvgPath}
+                      stroke={activeData.tech.color}
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      fill="none"
+                      style={{ filter: `drop-shadow(0 0 8px ${activeData.tech.color})` }}
+                      initial={{ pathLength: 0.15, pathOffset: -0.15, opacity: 0 }}
+                      animate={{ pathOffset: 1, opacity: 1 }}
+                      exit={{ opacity: 0, transition: { duration: 0.2 } }}
+                      transition={{ 
+                        pathOffset: { duration: 1.5, repeat: Infinity, ease: "linear", delay: 0.4 },
+                        opacity: { delay: 0.4, duration: 0.2 }
+                      }}
+                    />
+                  )}
                 </motion.svg>
                 </React.Fragment>
               )}
@@ -365,6 +389,8 @@ const TechStack = () => {
                       }`}
                       style={{
                         "--hc-index": cellIndex,
+                        transform: "translateZ(0)", // Force Hardware Acceleration
+                        willChange: "transform, opacity, filter",
                         ...(isActive && tech ? {
                           filter: `drop-shadow(0 0 15px ${tech.color}80) brightness(1.2)`,
                           backgroundColor: `${tech.color}15`,
