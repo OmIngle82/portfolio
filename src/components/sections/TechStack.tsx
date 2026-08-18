@@ -68,54 +68,7 @@ const techList: Tech[] = [
   { name: "Linux", Icon: SiLinux, category: "System Administration", color: "#FCC624" }
 ];
 
-// 61 total hexagons
-const honeycombPattern = [5, 6, 7, 8, 9, 8, 7, 6, 5];
-
-// Pre-compute grid layout: Cluster exactly 30 technologies in a perfect inner hexagon
-const grid = (() => {
-  const slots: { colIndex: number; cellIndex: number; distance: number }[] = [];
-  honeycombPattern.forEach((count, colIndex) => {
-    const mid = (count - 1) / 2;
-    for (let cellIndex = 0; cellIndex < count; cellIndex++) {
-      // Convert to cube coordinates for exact hexagonal distance
-      const q = colIndex - 4;
-      const r = cellIndex - mid;
-      const x = q;
-      const y = r - q / 2;
-      const z = -x - y;
-      const distance = Math.max(Math.abs(x), Math.abs(y), Math.abs(z));
-      
-      slots.push({
-        colIndex,
-        cellIndex,
-        distance,
-      });
-    }
-  });
-
-  slots.sort((a, b) => a.distance - b.distance);
-  
-  // Create a mapping of `${colIndex}-${cellIndex}` to tech
-  const assignmentMap = new Map();
-  slots.forEach((slot, i) => {
-    if (i < techList.length) {
-      assignmentMap.set(`${slot.colIndex}-${slot.cellIndex}`, techList[i]);
-    }
-  });
-
-  let globalIndex = 0;
-  return honeycombPattern.map((count, colIndex) => ({
-    colIndex,
-    cells: Array.from({ length: count }, (_, cellIndex) => {
-      const tech = assignmentMap.get(`${colIndex}-${cellIndex}`) || null;
-      return {
-        tech,
-        cellIndex,
-        globalIndex: globalIndex++,
-      };
-    }),
-  }));
-})();
+// Grid calculation moved into the component for dynamic mobile sizing
 
 // ── Component ─────────────────────────────────────────
 
@@ -136,6 +89,47 @@ const TechStack = () => {
   const [activeData, setActiveData] = useState<ActiveData | null>(null);
   const [badgeWidth, setBadgeWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Dynamically calculate grid based on device
+  const grid = React.useMemo(() => {
+    // Mobile: 37 hexagons (tight fit for 30 tech). Desktop: 61 hexagons (expansive)
+    const honeycombPattern = isMobile ? [4, 5, 6, 7, 6, 5, 4] : [5, 6, 7, 8, 9, 8, 7, 6, 5];
+    const centerOffset = isMobile ? 3 : 4; // Center column index
+    
+    const slots: { colIndex: number; cellIndex: number; distance: number }[] = [];
+    honeycombPattern.forEach((count, colIndex) => {
+      const mid = (count - 1) / 2;
+      for (let cellIndex = 0; cellIndex < count; cellIndex++) {
+        // Convert to cube coordinates for exact hexagonal distance
+        const q = colIndex - centerOffset;
+        const r = cellIndex - mid;
+        const x = q;
+        const y = r - q / 2;
+        const z = -x - y;
+        const distance = Math.max(Math.abs(x), Math.abs(y), Math.abs(z));
+        
+        slots.push({ colIndex, cellIndex, distance });
+      }
+    });
+
+    slots.sort((a, b) => a.distance - b.distance);
+    
+    const assignmentMap = new Map();
+    slots.forEach((slot, i) => {
+      if (i < techList.length) {
+        assignmentMap.set(`${slot.colIndex}-${slot.cellIndex}`, techList[i]);
+      }
+    });
+
+    let globalIndex = 0;
+    return honeycombPattern.map((count, colIndex) => ({
+      colIndex,
+      cells: Array.from({ length: count }, (_, cellIndex) => {
+        const tech = assignmentMap.get(`${colIndex}-${cellIndex}`) || null;
+        return { tech, cellIndex, globalIndex: globalIndex++ };
+      }),
+    }));
+  }, [isMobile]);
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -292,9 +286,9 @@ const TechStack = () => {
         >
           <div className="honeycomb-container relative" ref={containerRef}>
             
-            {/* SVG Trace Layer (UNDERNEATH the honeycomb tiles) */}
+            {/* SVG Trace Layer and Particles (UNDERNEATH the honeycomb tiles) */}
             <AnimatePresence mode="wait">
-              {activeData && (
+              {activeData && !isMobile && (
                 <React.Fragment key={activeData.tech.name}>
                   {/* Sonic Blast Particles Originating from Clicked Hexagon */}
                   <SonicBlastParticles x={activeData.x} y={activeData.y} color={activeData.tech.color} />
