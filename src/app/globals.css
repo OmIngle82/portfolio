@@ -1133,7 +1133,10 @@ body {
   height: 50px;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
+  will-change: transform, backdrop-filter;
+  transform: translateZ(0);
   opacity: 1;
   transition: 0.1s;
   animation: about-animate 2s ease-in-out infinite;
@@ -1149,7 +1152,10 @@ body {
   height: 50px;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
+  will-change: transform, backdrop-filter;
+  transform: translateZ(0);
   opacity: 1;
   transition: 0.5s;
   box-shadow: 0 5px 15px rgba(0,0,0,0.08);
@@ -1163,7 +1169,10 @@ body {
   height: 540px;
   padding: 30px 40px;
   background: rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
+  will-change: transform, backdrop-filter;
+  transform: translateZ(0);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   z-index: 1;
