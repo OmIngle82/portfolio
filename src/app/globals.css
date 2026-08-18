@@ -1071,7 +1071,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: 0.5s;
+  transition: transform 0.5s ease;
   z-index: 1;
 }
 
@@ -1086,7 +1086,7 @@ body {
   background: #fff;
   border-radius: 8px;
   transform: translateX(-50%) skewX(15deg);
-  transition: 0.5s;
+  transition: transform 0.5s ease;
 }
 
 .about-box::after {
@@ -1099,7 +1099,7 @@ body {
   background: #fff;
   border-radius: 8px;
   transform: translateX(-50%) skewX(15deg);
-  transition: 0.5s;
+  transition: transform 0.5s ease;
   filter: blur(30px);
 }
 
@@ -1167,7 +1167,7 @@ body {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   z-index: 1;
-  transition: 0.5s;
+  transition: transform 0.5s ease;
   color: #fff;
   display: flex;
   flex-direction: column;
