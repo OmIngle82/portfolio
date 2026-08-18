@@ -90,17 +90,15 @@ const TechStack = () => {
   const [badgeWidth, setBadgeWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Dynamically calculate grid based on device
+  // Use the full 61-cell grid globally to maintain perfect shape and centering
   const grid = React.useMemo(() => {
-    // Mobile: 37 hexagons (tight fit for 30 tech). Desktop: 61 hexagons (expansive)
-    const honeycombPattern = isMobile ? [4, 5, 6, 7, 6, 5, 4] : [5, 6, 7, 8, 9, 8, 7, 6, 5];
-    const centerOffset = isMobile ? 3 : 4; // Center column index
+    const honeycombPattern = [5, 6, 7, 8, 9, 8, 7, 6, 5];
+    const centerOffset = 4; // Center column index for 9 columns
     
     const slots: { colIndex: number; cellIndex: number; distance: number }[] = [];
     honeycombPattern.forEach((count, colIndex) => {
       const mid = (count - 1) / 2;
       for (let cellIndex = 0; cellIndex < count; cellIndex++) {
-        // Convert to cube coordinates for exact hexagonal distance
         const q = colIndex - centerOffset;
         const r = cellIndex - mid;
         const x = q;
@@ -129,13 +127,13 @@ const TechStack = () => {
         return { tech, cellIndex, globalIndex: globalIndex++ };
       }),
     }));
-  }, [isMobile]);
+  }, []); // Remove isMobile dependency since grid is static again
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.015, ease: "easeInOut" },
+      transition: { staggerChildren: isMobile ? 0 : 0.015, ease: "easeInOut" },
     },
   };
 
@@ -145,7 +143,7 @@ const TechStack = () => {
       opacity: 1, 
       scale: 1, 
       filter: "blur(0px)",
-      transition: { type: "spring", stiffness: 80, damping: 20 }
+      transition: isMobile ? { type: "tween", duration: 0.3 } : { type: "spring", stiffness: 80, damping: 20 }
     },
   };
 
@@ -288,7 +286,7 @@ const TechStack = () => {
             
             {/* SVG Trace Layer and Particles (UNDERNEATH the honeycomb tiles) */}
             <AnimatePresence mode="wait">
-              {activeData && !isMobile && (
+              {activeData && (
                 <React.Fragment key={activeData.tech.name}>
                   {/* Sonic Blast Particles Originating from Clicked Hexagon */}
                   <SonicBlastParticles x={activeData.x} y={activeData.y} color={activeData.tech.color} />
