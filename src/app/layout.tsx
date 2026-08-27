@@ -14,10 +14,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Om Ingle | Software Engineer",
+  title: "Om Ingle | On a Journey Through Tech",
   description: "Architecting intelligence and engineering impact through robust backend architecture and AI-driven solutions.",
   openGraph: {
-    title: "Om Ingle | Software Engineer",
+    title: "Om Ingle | On a Journey Through Tech",
     description: "Architecting intelligence and engineering impact through robust backend architecture and AI-driven solutions.",
     url: "https://omingledocs.vercel.app/",
     siteName: "Om Ingle Portfolio",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Om Ingle | Software Engineer",
+    title: "Om Ingle | On a Journey Through Tech",
     description: "Architecting intelligence and engineering impact through robust backend architecture and AI-driven solutions.",
   },
 };

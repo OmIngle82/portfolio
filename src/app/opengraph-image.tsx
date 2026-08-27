@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
 
-export const alt = 'Om Ingle | Software Engineer';
+export const alt = 'Om Ingle | On a Journey Through Tech';
 export const size = {
   width: 1200,
   height: 630,
@@ -87,7 +87,7 @@ export default async function Image() {
           letterSpacing: '0.1em',
           textAlign: 'center',
         }}>
-          SOFTWARE ENGINEER
+          ON A JOURNEY THROUGH TECH
         </h2>
         
         {/* Decorative line */}
