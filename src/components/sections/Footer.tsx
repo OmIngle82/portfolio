@@ -16,15 +16,16 @@ const Footer = () => {
         const hasVisited = sessionStorage.getItem('portfolio_visited');
         const action = hasVisited ? 'get' : 'increment';
         
+        // Set the flag synchronously BEFORE the fetch to prevent React 18 StrictMode 
+        // from double-firing the increment during development
+        if (!hasVisited) {
+          sessionStorage.setItem('portfolio_visited', 'true');
+        }
+        
         const response = await fetch(`/api/visitors?action=${action}`);
         const data = await response.json();
         
         setVisitorCount(data.count);
-
-        // If this was a new visit and we successfully fetched, mark them as visited
-        if (!hasVisited && data.count) {
-          sessionStorage.setItem('portfolio_visited', 'true');
-        }
       } catch (error) {
         console.error("Failed to fetch visitor count:", error);
         setVisitorCount(1204); // Fallback
