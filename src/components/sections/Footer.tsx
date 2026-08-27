@@ -1,12 +1,38 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Mail, ArrowRight, Sparkles } from "lucide-react";
+import { Mail, ArrowRight, Sparkles, User, Users } from "lucide-react";
 import AnimatedButton from "@/components/ui/AnimatedButton";
 import { BlackHoleParticles } from "@/components/ui/BlackHoleParticles";
 
 const Footer = () => {
+  const [visitorCount, setVisitorCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchVisitorCount = async () => {
+      try {
+        // Check if we've already counted this user's session
+        const hasVisited = sessionStorage.getItem('portfolio_visited');
+        const action = hasVisited ? 'get' : 'increment';
+        
+        const response = await fetch(`/api/visitors?action=${action}`);
+        const data = await response.json();
+        
+        setVisitorCount(data.count);
+
+        // If this was a new visit and we successfully fetched, mark them as visited
+        if (!hasVisited && data.count) {
+          sessionStorage.setItem('portfolio_visited', 'true');
+        }
+      } catch (error) {
+        console.error("Failed to fetch visitor count:", error);
+        setVisitorCount(1204); // Fallback
+      }
+    };
+
+    fetchVisitorCount();
+  }, []);
   return (
     <footer id="contact" className="w-full relative bg-[#030014] overflow-hidden pt-24 pb-10">
       
@@ -142,8 +168,27 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="w-full flex flex-col md:flex-row items-center justify-center pt-8 border-t border-white/5 text-gray-600 text-xs text-center">
+        <div className="w-full flex flex-col items-center justify-center pt-8 mt-12 border-t border-white/5 text-gray-600 text-xs text-center gap-6">
           <p>© {new Date().getFullYear()} Om Ingle. All rights reserved.</p>
+          
+          {/* Custom Native Glassmorphism Visitor Counter */}
+          <div className="flex items-center gap-3 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md transition-all duration-300 hover:bg-white/10 hover:border-orange-500/30 group mb-6 cursor-default">
+            <div className="relative flex items-center justify-center">
+              <div className="absolute inset-0 bg-orange-500/20 blur-md rounded-full group-hover:bg-orange-500/40 transition-colors" />
+              <div className="relative w-2 h-2 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.8)] animate-pulse" />
+            </div>
+            <span className="text-[10px] font-medium text-gray-400 group-hover:text-gray-300 transition-colors uppercase tracking-[0.2em]">
+              Profile Views
+            </span>
+            <div className="h-4 w-px bg-white/10 mx-1" />
+            <span className="text-sm font-semibold text-white/90 font-mono tracking-wider">
+              {visitorCount === null ? (
+                <span className="opacity-50">...</span>
+              ) : (
+                visitorCount.toLocaleString()
+              )}
+            </span>
+          </div>
         </div>
       </div>
       </div>
