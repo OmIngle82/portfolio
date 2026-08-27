@@ -13,14 +13,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const getBaseUrl = () => {
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  return 'http://localhost:3000';
+};
+const baseUrl = getBaseUrl();
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://portfolio-omingle82s-projects.vercel.app"),
+  metadataBase: new URL(baseUrl),
   title: "Om Ingle | On a Journey Through Tech",
   description: "Architecting intelligence and engineering impact through robust backend architecture and AI-driven solutions.",
   openGraph: {
     title: "Om Ingle | On a Journey Through Tech",
     description: "Architecting intelligence and engineering impact through robust backend architecture and AI-driven solutions.",
-    url: "https://portfolio-omingle82s-projects.vercel.app/",
+    url: baseUrl,
     siteName: "Om Ingle Portfolio",
     locale: "en_US",
     type: "website",
