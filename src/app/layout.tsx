@@ -14,12 +14,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://portfolio-omingle82s-projects.vercel.app"),
   title: "Om Ingle | On a Journey Through Tech",
   description: "Architecting intelligence and engineering impact through robust backend architecture and AI-driven solutions.",
   openGraph: {
     title: "Om Ingle | On a Journey Through Tech",
     description: "Architecting intelligence and engineering impact through robust backend architecture and AI-driven solutions.",
-    url: "https://omingledocs.vercel.app/",
+    url: "https://portfolio-omingle82s-projects.vercel.app/",
     siteName: "Om Ingle Portfolio",
     locale: "en_US",
     type: "website",
